@@ -51,7 +51,7 @@ public class UserController {
         }
         else{
         // 返回给前端的数据设置(登录失败),返回登录页
-        model.addAttribute("message", "登录失败，账号密码错误");
+        model.addAttribute("message", "登录失败，账号或密码错误");
         return "index";
     }
     }
