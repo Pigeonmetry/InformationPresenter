@@ -62,7 +62,7 @@ public class UserController {
 
 
     @PostMapping("/toregister")
-    public String register(@Param("email")String email, @Param("password") String password,Model model) {
+    public String register(HttpSession session,@Param("email")String email, @Param("password") String password,Model model) {
 
         if(StringUtils.hasLength(email)==false){
             model.addAttribute("msg", "注册失败，邮箱未填写完整");
@@ -73,6 +73,7 @@ public class UserController {
             return "index";
         }
         User user = userService.seleteEmail(email);
+        session.setAttribute("registerUser", user);
         if(user !=null){
             model.addAttribute("msg", "注册失败,邮箱已被注册");
             return "index";
