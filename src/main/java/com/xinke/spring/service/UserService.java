@@ -1,6 +1,7 @@
 package com.xinke.spring.service;
 
 import com.xinke.spring.bean.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,4 +26,10 @@ public interface UserService {
      */
     User login(String email, String password);
 
+    /**
+     * Validation email
+     * @param email
+     * @return
+     */
+    User seleteEmail(@Param("email") String email);
 }

@@ -34,5 +34,12 @@ public interface UserMapper{
     @Insert("insert into tab_user(email,password) values(#{email},#{password})")
     int saveUser(@Param("email") String email,@Param("password") String password);
 
+    /**
+     * 验证邮箱
+     * @param email
+     * @return
+     */
+    @Select("select email from tab_user where email=#{email}")
+    User seleteEmail(@Param("email") String email);
 
 }
