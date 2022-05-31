@@ -10,36 +10,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * @author Administrator
  */
 @Slf4j
-@RequestMapping("/api")
-@RestController
+@Controller
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    @GetMapping(value = {"/","/index"})
+    public String indexpage(){
 
-    @PostMapping("/login")
-    public String login(String email, String password) {
+        return "index";
+    }
+
+    @PostMapping("/tologin")
+    public String login(Model model,HttpServletRequest request, HttpSession session, @RequestParam Map<String, String> parameter) {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
         User user = userService.login(email,password);
-        if(user == null){
-            return "登录失败";
+        if (user != null && StringUtils.hasLength(user.getPassword())) {
+            // 把当前用户信息存到session里，用于后续操作
+            session.setAttribute("loginUser", user);
+            // 返回给前端的数据设置（登录成功）
+            parameter.put("message", "登录成功");
+            parameter.put("status", "ok");
+            return "redirect:success";
         }
-        return "登录成功";
+        else{
+        // 返回给前端的数据设置(登录失败)
+        model.addAttribute("message", "登录失败，账号密码错误");
+        return "index";
+    }
+    }
+    @GetMapping("/success")
+    public String successpage(){
+        return "success";
     }
 
 
-    @RequestMapping("/register")
+    @GetMapping("/toregister")
     public String register(@Param("email")String email, @Param("password") String password) {
         int result = userService.saveUser(email,password);
         if(result == 0){
