@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <h1>欢迎</h1>
+            <form method="post" action="api/login">
+                <input type="text" placeholder="user login" name="email" id="email" >
+                <input type="password" placeholder="password" name="password" id="password" >
+                <input type="submit" value="login">
+            </form>
+            注册
+        <form method="get" action="api/register">
+            <input type="text" placeholder="user register" name="email" id="email1" >
+            <input type="password" placeholder="password" name="password" id="password1" >
+            <input type="submit" value="register">
+        </form>
+
+</body>
+</html>

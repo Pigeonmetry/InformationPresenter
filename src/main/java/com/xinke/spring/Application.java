@@ -1,11 +1,19 @@
 package com.xinke.spring;
 
-import com.xinke.spring.service.demo;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+
+/**
+ * @author Administrator
+ */
+@SpringBootApplication
+@MapperScan("com.xinke.spring.mapper")
 public class Application {
 
     public static void main(String[] args) {
