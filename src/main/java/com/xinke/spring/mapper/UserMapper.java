@@ -42,4 +42,14 @@ public interface UserMapper{
     @Select("select email from tab_user where email=#{email}")
     User seleteEmail(@Param("email") String email);
 
+    /**
+     * 个人信息填写
+     * @param   username,sex,phone,height,skills,education,school,address
+     * @return
+     */
+    @Insert("insert into tab_user(username,sex,phone,height,skills,education,school,address) " +
+            "values(#{username},#{sex},#{phone},#{height},#{skills},#{education},#{school},#{address})")
+    int insertUser(String username,String sex ,int phone,
+                   int height,String skills,
+                   String education,String school,String address);
 }

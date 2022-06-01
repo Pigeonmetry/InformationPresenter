@@ -35,5 +35,11 @@ public class ImpService implements UserService {
         return userMapper.seleteEmail(email);
     }
 
+    @Override
+    public int insertUser(String username, String sex, int phone, int height, String skills, String education, String school, String address) {
+        int count = userMapper.insertUser(username,sex,phone,height,skills,education,school,address);
+        return count;
+    }
+
 
 }

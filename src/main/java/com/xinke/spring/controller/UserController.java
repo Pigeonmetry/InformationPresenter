@@ -1,5 +1,6 @@
 package com.xinke.spring.controller;
 
+import com.google.gson.Gson;
 import com.xinke.spring.mapper.UserMapper;
 import com.xinke.spring.bean.User;
 import com.xinke.spring.service.UserService;
@@ -7,6 +8,7 @@ import com.xinke.spring.service.imp.ImpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +20,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.Map;
+
+import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 
 /**
  * @author Administrator
@@ -35,33 +40,22 @@ public class UserController {
 
         return "index";
     }
-
-    @PostMapping("/tologin")
-    public String login(Model model,HttpServletRequest request, HttpSession session, @RequestParam Map<String, String> parameter) {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        User user = userService.login(email,password);
-        if (user != null && StringUtils.hasLength(user.getPassword())) {
-            // 把当前用户信息存到session里，用于后续操作
-            session.setAttribute("loginUser", user);
+    @RequestMapping("/api/login")
+    public String login( @RequestBody User user) {
+          String flag = "fail";
+          User u = userService.login(user.getEmail(),user.getPassword());
+        if (u != null && StringUtils.hasLength(user.getPassword())) {
             // 返回给前端的数据设置（登录成功）
-            parameter.put("message", "登录成功");
-            parameter.put("status", "ok");
-            return "redirect:success";
+            flag = "ok";
         }
-        else{
-        // 返回给前端的数据设置(登录失败),返回登录页
-        model.addAttribute("message", "登录失败，账号或密码错误");
-        return "index";
+        Map<String , Object> map =  new HashMap<>();
+        map.put("flag",flag);
+        map.put("user",user);
+        Gson gson = new Gson();
+        String param = gson.toJson(map);
+        return param;
     }
-    }
-    @GetMapping("/success")
-    public String successpage(){
-        return "success";
-    }
-
-
-    @PostMapping("/toregister")
+    @RequestMapping("/api/register")
     public String register(HttpSession session,@Param("email")String email, @Param("password") String password,Model model) {
 
         if(StringUtils.hasLength(email)==false){
@@ -75,12 +69,13 @@ public class UserController {
         User user = userService.seleteEmail(email);
         session.setAttribute("registerUser", user);
         if(user !=null){
-            model.addAttribute("msg", "注册失败,邮箱已被注册");
+             model.addAttribute("msg", "注册失败,邮箱已被注册");
             return "index";
         }
         else{
             userService.saveUser(email,password);
-            return "/success";
+            model.addAttribute("msg", "注册成功,您可以登录了");
+            return "index";
         }
     }
 }

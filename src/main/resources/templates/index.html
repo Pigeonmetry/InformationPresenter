@@ -6,14 +6,15 @@
 </head>
 <body>
         <h1>欢迎</h1>
-            <form method="post" action="/tologin">
-                <label style="color: red" th:text="${message}"></label><br>
+            登录
+            <form method="get" action="/api/login">
+                <label style="color: #ff0000" th:text="${message}"></label><br>
                 <input type="text" placeholder="user login" name="email" id="email" >
                 <input type="password" placeholder="password" name="password" id="password" >
                 <input type="submit" value="login">
             </form>
             注册
-        <form method="post" action="/toregister">
+        <form method="post" action="/api/register">
             <label style="color: red" th:text="${msg}"></label><br>
             <input type="text" placeholder="user register" name="email" id="email1" >
             <input type="password" placeholder="password" name="password" id="password1" >

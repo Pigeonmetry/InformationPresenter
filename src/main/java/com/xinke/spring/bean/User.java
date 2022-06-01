@@ -19,17 +19,27 @@ import javax.persistence.Id;
 @TableName("tab_user")
 @Entity
 public class User{
-
-    private String username;
-    private String password;
     @Id
     @GeneratedValue
     private String email;
+
+    private String password;
+
+    private String username;
+
     private String sex;
+
     private int phone;
+
     private int height;
+
     private String skills;
+
     private String education;
+
     private String school;
+
     private String address;
+
+
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public interface UserService {
 
     /**
-     * saveUser
+     * register
      * @param email
      * @param password
      * @return
@@ -29,7 +29,16 @@ public interface UserService {
     /**
      * Validation email
      * @param email
-     * @return
+     * @return int
      */
     User seleteEmail(@Param("email") String email);
+
+    /**
+     * 保存个人信息
+     * @param username,sex,phone,height,skills,education,school,address
+     * @return int
+     */
+    int insertUser(String username,String sex ,int phone,
+                   int height,String skills,
+                   String education,String school,String address);
 }
