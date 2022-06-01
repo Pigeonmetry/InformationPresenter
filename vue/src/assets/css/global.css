@@ -8,6 +8,14 @@
     background: #fff7e6;
 }
 
+/* 全局设置 element ui dialog水平垂直居中 */
+.el-dialog {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 !important;
+}
+
 .el-menu {
     --el-menu-bg-color: transparent;
     --el-menu-text-color: #fa8c16;
