@@ -42,13 +42,13 @@
             class="el-menu-demo"
             mode="horizontal"
             :ellipsis="false">
-          <el-menu-item index="1">注册</el-menu-item>
-          <el-menu-item index="2">登录</el-menu-item>
+          <el-menu-item index="1" @click="dialog.signup=true">注册</el-menu-item>
+          <el-menu-item index="2" @click="dialog.login=true">登录</el-menu-item>
         </el-menu>
         <el-input
             class="searcher"
             placeholder="搜索"
-            v-model="text.searcher"
+            v-model="data.searcher"
             maxlength="38"
             clearable>
           <template #prefix>
@@ -59,15 +59,52 @@
         </el-input>
       </div>
     </div>
+    <!--登录弹窗-->
+    <Dialog
+        title="登录"
+        v-model="dialog.login">
+      <template #content>
+        <el-form class="dialog-content" id="form-login" label-width="60px">
+
+          <el-form-item label="用户名">
+            <el-input name="username" v-model="data.login.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input name="password" type="password" v-model="data.login.username"></el-input>
+          </el-form-item>
+
+        </el-form>
+      </template>
+    </Dialog>
+    <!--注册弹窗-->
+    <Dialog title="注册" v-model="dialog.signup">
+      <template #content>
+        <el-form class="dialog-content" id="form-register" label-width="80px">
+          <el-form-item label="用户名">
+            <el-input name="username" v-model="data.signup.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input name="password" type="password" v-model="data.signup.password"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码">
+            <el-input
+                name="password_confirmation"
+                type="password"
+                v-model="data.signup.password_confirmation"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+    </Dialog>
   </el-header>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {Search} from "@element-plus/icons-vue";
+import Dialog from "./Dialog.vue";
 
 @Options({
-  components: {Search},
+  components: {Dialog, Search},
   props: {
     logo: {
       type: String,
@@ -81,8 +118,22 @@ import {Search} from "@element-plus/icons-vue";
 })
 export default class Navigator extends Vue {
 
-  public text = {
+  public data = {
     searcher: '',
+    login: {
+      username: '',
+      password: ''
+    },
+    signup: {
+      username: '',
+      password: '',
+      password_confirmation: ''
+    }
+  }
+
+  public dialog = {
+    login: false,
+    signup: false,
   }
 }
 </script>
@@ -141,4 +192,8 @@ export default class Navigator extends Vue {
   --el-input-focus-border-color: #fa8c16;
 }
 
+.dialog-content{
+  width: 260px;
+  margin: 0 auto;
+}
 </style>
