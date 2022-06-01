@@ -20,14 +20,19 @@ public class ImpService implements UserService {
 
     @Override
     public int saveUser(String email, String password) {
-        int user = userMapper.saveUser(email,password);
-        return user;
+        int result = userMapper.saveUser(email,password);
+        return result;
     }
 
     @Override
     public User login(String email, String password) {
 
         return userMapper.login(email,password);
+    }
+
+    @Override
+    public User seleteEmail(String email) {
+        return userMapper.seleteEmail(email);
     }
 
 

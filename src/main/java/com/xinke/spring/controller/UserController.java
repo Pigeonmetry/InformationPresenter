@@ -50,8 +50,8 @@ public class UserController {
             return "redirect:success";
         }
         else{
-        // 返回给前端的数据设置(登录失败)
-        model.addAttribute("message", "登录失败，账号密码错误");
+        // 返回给前端的数据设置(登录失败),返回登录页
+        model.addAttribute("message", "登录失败，账号或密码错误");
         return "index";
     }
     }
@@ -61,12 +61,26 @@ public class UserController {
     }
 
 
-    @GetMapping("/toregister")
-    public String register(@Param("email")String email, @Param("password") String password) {
-        int result = userService.saveUser(email,password);
-        if(result == 0){
-            return "fail";
+    @PostMapping("/toregister")
+    public String register(HttpSession session,@Param("email")String email, @Param("password") String password,Model model) {
+
+        if(StringUtils.hasLength(email)==false){
+            model.addAttribute("msg", "注册失败，邮箱未填写完整");
+            return "index";
         }
-        return "success";
+        if(StringUtils.hasLength(password)==false){
+            model.addAttribute("msg", "注册失败，密码未填写完整");
+            return "index";
+        }
+        User user = userService.seleteEmail(email);
+        session.setAttribute("registerUser", user);
+        if(user !=null){
+            model.addAttribute("msg", "注册失败,邮箱已被注册");
+            return "index";
+        }
+        else{
+            userService.saveUser(email,password);
+            return "/success";
+        }
     }
 }
