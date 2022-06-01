@@ -29,6 +29,7 @@ import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
  * @author Administrator
  */
 @Slf4j
+@CrossOrigin
 @Controller
 public class UserController {
 
