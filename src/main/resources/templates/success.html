@@ -5,18 +5,21 @@
     <title>Title</title>
 </head>
 <body>
-                    个人信息填写,,,,,,,address
-<form method="post" action="/apiregister">
+                    个人信息填写,,,,,,,
+<form method="post" action="/api/message">
     <label style="color: red" th:text="${msg}"></label><br>
-    <input type="text" placeholder="username" name="username" id="username" >
-    <input type="text" placeholder="sex" name="sex" id="sex" >
-    <input type="text" placeholder="phone" name="phone" id="phone" >
-    <input type="text" placeholder="height" name="height" id="height" >
-    <input type="text" placeholder="skills" name="skills" id="skills" >
-    <input type="text" placeholder="education" name="school" id="school" >
-    <input type="text" placeholder="user register" name="email" id="email1" >
-    <input type="text" placeholder="user register" name="email" id="email1" >
-    <input type="submit" value="register">
+    <label style="color: #ff0000" th:text="${message}"></label><br>
+    <input type="text" placeholder="email" name="email" id="email" ><br>
+    <input type="text" placeholder="username" name="username" id="username" ><br>
+    <input type="text" placeholder="sex" name="sex" id="sex" ><br>
+    <input type="text" placeholder="phone" name="phone" id="phone" ><br>
+    <input type="text" placeholder="height" name="height" id="height" ><br>
+    <input type="text" placeholder="skills" name="skills" id="skills" ><br>
+    <input type="text" placeholder="education" name="education" id="education" ><br>
+    <input type="text" placeholder="address" name="address" id="address" ><br>
+    <input type="text" placeholder="school" name="school" id="school" ><br>
+    <input type="text" placeholder="text" name="text" id="text" ><br>
+    <input type="submit" value="message">
 </form>
 </body>
 </html>

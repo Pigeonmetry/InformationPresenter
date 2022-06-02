@@ -7,7 +7,7 @@
 <body>
         <h1>欢迎</h1>
             登录
-            <form method="get" action="/api/login">
+            <form method="post" th:action="@{/api/login}">
                 <label style="color: #ff0000" th:text="${message}"></label><br>
                 <input type="text" placeholder="user login" name="email" id="email" >
                 <input type="password" placeholder="password" name="password" id="password" >

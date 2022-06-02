@@ -38,7 +38,13 @@ public interface UserService {
      * @param username,sex,phone,height,skills,education,school,address
      * @return int
      */
-    int insertUser(String username,String sex ,int phone,
-                   int height,String skills,
+    int insertUser(String email,String username,String sex ,String phone,
+                   String height,String skills,String text,
                    String education,String school,String address);
+    /**
+     * 查询所有信息
+     * @param email
+     * @return user
+     */
+    User seleteAll(@Param("email") String email);
 }

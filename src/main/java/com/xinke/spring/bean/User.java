@@ -29,9 +29,9 @@ public class User{
 
     private String sex;
 
-    private int phone;
+    private String phone;
 
-    private int height;
+    private String height;
 
     private String skills;
 

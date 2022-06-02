@@ -47,9 +47,11 @@ public interface UserMapper{
      * @param   username,sex,phone,height,skills,education,school,address
      * @return
      */
-    @Insert("insert into tab_user(username,sex,phone,height,skills,education,school,address) " +
-            "values(#{username},#{sex},#{phone},#{height},#{skills},#{education},#{school},#{address})")
-    int insertUser(String username,String sex ,int phone,
-                   int height,String skills,
+    @Insert("UPDATE tab_user SET username = #{username},phone=#{phone},sex=#{sex},height=#{height},skills=#{skills},education=#{education},school=#{school},address=#{address},text=#{text} WHERE email =#{email};")
+    int insertUser(String email,String username,String sex ,String phone,
+                   String height,String skills,String text,
                    String education,String school,String address);
+    @Select("select * from tab_user where email=#{email}")
+    User seleteAll(@Param("email") String email);
+
 }

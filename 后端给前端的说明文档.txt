@@ -1,0 +1,35 @@
+首页：/
+说明：默认找到index.html做首页
+------------------------------------------------
+登录: /api/login
+说明：登录需要两个参数：
+        email
+        password
+        返回参数:
+                msg: 登录成功 或 登录失败，请检查账号密码
+                status: ok 或 fail
+------------------------------------------------
+注册：/api/register
+说明：注册需要两个参数：
+    email
+    password
+        返回参数: msg和status
+            msg: 注册失败，邮箱未填写完整
+            或
+            注册失败，密码未填写完整
+            或
+            注册失败,邮箱已被注册
+            或
+            注册成功,您可以登录了
+            status: ok 或 fail
+------------------------------------------------
+填写个人信息：
+说明：填写有10参数，email是必填项：
+        email, username, sex , phone,height,
+        skills, text,education, school, address
+    返回参数:
+    msg和status
+              msg: 邮箱不存在,请重新确认或选择重新注册邮箱
+              status: fail
+    填写成功则返回10个参数的User对象的Json字符串
+
