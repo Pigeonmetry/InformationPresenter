@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dialog">
     <el-dialog
         :model-value="modelValue"
         :title="title"
@@ -9,12 +9,12 @@
         center
     >
 
-      <slot name="content"/>
+      <slot class="slot1" name="content"/>
 
       <template #footer>
           <span class="dialog-footer">
-            <el-button type="primary" @click="onSubmit">确认</el-button>
-            <el-button v-if="cancelable" type="warning" @click="this.$emit('update:modelValue',false)">取消</el-button>
+            <el-button type="success" @click="onSubmit">确认</el-button>
+            <el-button v-if="cancelable" type="danger" @click="this.$emit('update:modelValue',false)">取消</el-button>
           </span>
       </template>
 
@@ -49,4 +49,8 @@ export default class Login extends Vue {
 </script>
 
 <style scoped>
+.dialog {
+  --el-bg-color: var(--bg-color);
+  --el-border-radius-small: 3%;
+}
 </style>

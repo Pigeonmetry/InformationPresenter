@@ -1,7 +1,7 @@
 import {Component, createApp} from 'vue'
 import App from './App.vue'
 
-// import router from './router'
+import router from './router'
 import store from "./store/index";
 
 import ElementPlus from 'element-plus'
@@ -11,7 +11,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import "./assets/css/global.css";
 
 const app = createApp(App)
-    // .use(router)2
+    .use(router)
     .use(store)
     .use(ElementPlus, {
         locale: zhCn

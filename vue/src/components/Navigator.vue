@@ -1,10 +1,10 @@
 <template>
-  <el-header class="root">
+  <div class="root">
     <div class="navigator container">
       <!--左侧-->
       <div class="left">
         <!--标题图片-->
-        <div class="logo" onclick="alert('to home')">
+        <div class="logo" @click="this.$router.push('/')">
           <svg t="1653983164086" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
                p-id="1899" width="200" height="200">
             <path
@@ -42,52 +42,37 @@
             class="el-menu-demo"
             mode="horizontal"
             :ellipsis="false">
-          <el-menu-item index="1" @click="dialog.signup=true">注册</el-menu-item>
-          <el-menu-item index="2" @click="dialog.login=true">登录</el-menu-item>
+          <el-menu-item v-show="!isLogin" index="1" @click="dialog.retrieve=true">找回密码</el-menu-item>
+          <el-menu-item v-show="!isLogin" index="2" @click="dialog.signup=true">注册</el-menu-item>
+          <el-menu-item v-show="isLogin" index="3" @click="dialog.login=true">退出登录</el-menu-item>
         </el-menu>
-        <el-input
-            class="searcher"
-            placeholder="搜索"
-            v-model="data.searcher"
-            maxlength="38"
-            clearable>
-          <template #prefix>
-            <el-icon class="el-input__icon">
-              <search/>
-            </el-icon>
-          </template>
-        </el-input>
+        <!--        <el-input-->
+        <!--            class="searcher"-->
+        <!--            placeholder="搜索"-->
+        <!--            v-model="data.searcher"-->
+        <!--            maxlength="38"-->
+        <!--            clearable>-->
+        <!--          <template #prefix>-->
+        <!--            <el-icon class="el-input__icon" color="#fa8c16">-->
+        <!--              <Search/>-->
+        <!--            </el-icon>-->
+        <!--          </template>-->
+        <!--        </el-input>-->
       </div>
     </div>
-    <!--登录弹窗-->
-    <Dialog
-        title="登录"
-        v-model="dialog.login">
-      <template #content>
-        <el-form class="dialog-content" id="form-login" label-width="60px">
-
-          <el-form-item label="用户名">
-            <el-input name="username" v-model="data.login.username"></el-input>
-          </el-form-item>
-          <el-form-item label="密码">
-            <el-input name="password" type="password" v-model="data.login.username"></el-input>
-          </el-form-item>
-
-        </el-form>
-      </template>
-    </Dialog>
     <!--注册弹窗-->
-    <Dialog title="注册" v-model="dialog.signup">
+    <Dialog title="注册" v-model="dialog.signup" @submit="submitSignup">
       <template #content>
         <el-form class="dialog-content" id="form-register" label-width="80px">
           <el-form-item label="用户名">
-            <el-input name="username" v-model="data.signup.username"></el-input>
+            <el-input class="input-light" name="username" v-model="data.signup.username"></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input name="password" type="password" v-model="data.signup.password"></el-input>
+            <el-input class="input-light" name="password" type="password" v-model="data.signup.password"></el-input>
           </el-form-item>
           <el-form-item label="确认密码">
             <el-input
+                class="input-light"
                 name="password_confirmation"
                 type="password"
                 v-model="data.signup.password_confirmation"></el-input>
@@ -95,13 +80,45 @@
         </el-form>
       </template>
     </Dialog>
-  </el-header>
+    <!--找回密码弹窗-->
+    <Dialog
+        title="找回密码"
+        v-model="dialog.retrieve">
+      <template #content>
+        <el-form class="dialog-content" id="form-login" label-width="60px">
+
+          <el-form-item label="用户名">
+            <el-input class="input-light" name="username" v-model="data.retrieve.username"></el-input>
+          </el-form-item>
+          <el-form-item label="验证码">
+            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password"/>
+            <el-button type="primary">发送验证码</el-button>
+          </el-form-item>
+
+          <el-form-item label="新密码">
+            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password"/>
+          </el-form-item>
+
+        </el-form>
+      </template>
+    </Dialog>
+  </div>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {Search} from "@element-plus/icons-vue";
 import Dialog from "./Dialog.vue";
+import store from "../store";
+import Request from "../api/Request";
+import {ElMessage} from "element-plus";
+import qs from "qs";
+
+interface Response {
+  status: string,
+  data: any;
+  msg: string;
+}
 
 @Options({
   components: {Dialog, Search},
@@ -118,22 +135,52 @@ import Dialog from "./Dialog.vue";
 })
 export default class Navigator extends Vue {
 
+  public get isLogin(): boolean {
+    return store.state.userInfo != null;
+  }
+
   public data = {
     searcher: '',
-    login: {
-      username: '',
-      password: ''
-    },
     signup: {
       username: '',
       password: '',
       password_confirmation: ''
+    },
+    retrieve: {
+      username: '',
+      password: ''
     }
   }
 
   public dialog = {
-    login: false,
+    retrieve: false,
     signup: false,
+  }
+
+  public submitSignup(){
+    Request.inst({
+      url: 'register',
+      method: 'post',
+      data: qs.stringify(this.data.signup),
+    }).then(res => {
+      console.log(res);
+      let resp = JSON.parse(res.data) as Response;
+      ElMessage({
+        message: resp.msg,
+        type: resp.status == "success" ? 'success' : 'error',
+        duration: 1000,
+      })
+      if (resp.status == "success") {
+        this.dialog.signup = false;
+      }
+    }).catch(err => {
+      console.log(err);
+      ElMessage({
+        message: err.message,
+        type: 'error',
+        duration: 1000,
+      })
+    });
   }
 }
 </script>
@@ -141,12 +188,13 @@ export default class Navigator extends Vue {
 <style scoped>
 .root {
   width: 100%;
-  background: #ffe7ba;
+  box-shadow: 0 -10px 20px gray;
+  background-color: var(--bg-color);
 }
 
 .navigator {
   height: 100%;
-  color: #fa8c16;
+  color: var(--text-color);
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -182,17 +230,14 @@ export default class Navigator extends Vue {
   flex-wrap: nowrap;
 }
 
-.searcher {
-  width: 225px;
-  margin: 11px;
-  display: inline-flex;
-  --el-input-bg-color: #ffd7a0;
-  --el-input-placeholder-color: #fa8c16;
-  --el-input-border-color: #ffd7a0;
-  --el-input-focus-border-color: #fa8c16;
-}
+/*.searcher {*/
+/*  width: 225px;*/
+/*  margin: 11px;*/
+/*  display: inline-flex;*/
+/*  --el-input-bg-color: #fffbe6;*/
+/*}*/
 
-.dialog-content{
+.dialog-content {
   width: 260px;
   margin: 0 auto;
 }
