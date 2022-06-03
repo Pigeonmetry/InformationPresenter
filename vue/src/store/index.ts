@@ -8,6 +8,10 @@ const store = createStore({
         setUserInfo(state, userInfo) {
             state.userInfo = userInfo;
             localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        },
+        logout(state) {
+            state.userInfo = null;
+            localStorage.removeItem("userInfo");
         }
     }
 });

@@ -68,3 +68,17 @@ POST /api/info/update
   "data": null
 }
 ```
+
+### 修改头像
+
+POST /api/avatar/upload
+
+`byte[]`
+
+```json
+{
+  "status": "success",
+  "msg": "修改成功",
+  "data": null
+}
+```

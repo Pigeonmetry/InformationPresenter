@@ -16,7 +16,8 @@
                 </el-input>
               </el-form-item>
               <el-form-item>
-                <el-input class="input-light" type="password" v-model="data.login.password" required clearable show-password>
+                <el-input class="input-light" type="password" v-model="data.login.password" required clearable
+                          show-password @keyup.enter="submitLogin">
                   <template #prefix>
                     <el-icon color="#1890ff" size="24px" class="el-input__icon">
                       <Unlock/>
@@ -42,18 +43,16 @@
 import {Vue} from "vue-class-component";
 import Request from "../api/Request";
 import store from "../store";
-import {ElMessage} from "element-plus";
 import qs from "qs";
+import {ElMessage} from "element-plus";
+
+interface Response {
+  status: string,
+  data: any;
+  msg: string;
+}
 
 export default class LoginView extends Vue {
-
-  mounted() {
-    let loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-    if (loginInfo) {
-      store.state.userInfo = loginInfo;
-      this.$router.replace("/info");
-    }
-  }
 
   private data = {
     login: {
@@ -63,23 +62,29 @@ export default class LoginView extends Vue {
   }
 
   public submitLogin() {
-    let form=document.querySelector(".login-form") as HTMLFormElement;
-    if(!form.reportValidity())return;
+    let form = document.querySelector(".login-form") as HTMLFormElement;
+    if (!form.reportValidity()) return;
     Request.inst({
       url: "/login",
       method: "post",
       data: qs.stringify(this.data.login)
     }).then(res => {
       console.log(res);
-      if (res.status == "success") {
-        let userInfo = res.data;
-        store.commit('setUserInfo', userInfo);
+      let resp = res.data;
+      if (!resp.status) {
+        store.commit('setUserInfo', resp);
         ElMessage({
           message: '登录成功',
           type: 'success',
           duration: 1000,
         });
         this.$router.push("/info");
+      } else {
+        ElMessage({
+          message: resp.msg,
+          type: 'error',
+          duration: 1000,
+        });
       }
     }).catch(err => {
       console.log(err);
@@ -111,7 +116,7 @@ export default class LoginView extends Vue {
   height: 400px;
   border-radius: 10px;
   background-color: var(--bg-color);
-  box-shadow: 0 10px 20px gray;
+  box-shadow: 0 10px 20px lightgray;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -137,7 +142,7 @@ export default class LoginView extends Vue {
   margin-bottom: 50px;
 }
 
-.login-form{
+.login-form {
   width: 280px;
 }
 

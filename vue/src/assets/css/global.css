@@ -5,7 +5,7 @@
     box-sizing: border-box;
 
     --text-color: #1890ff;
-    --bg-color: #e6f7ff;
+    --bg-color: #bae7ff;
     --active-color: #096dd9;
     --hover-text-color: #0050b3;
     --hover-bg-color: #91d5ff;
@@ -20,6 +20,12 @@
 
 :root, body, #app {
     height: 100%;
+}
+
+:root{
+    /*fullscreen*/
+    background: url("public/ocean.gif") no-repeat center center fixed;
+    background-size: cover;
 }
 
 /* 全局设置 element ui dialog水平垂直居中 */
