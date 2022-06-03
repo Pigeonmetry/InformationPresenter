@@ -63,19 +63,12 @@
     <!--注册弹窗-->
     <Dialog title="注册" v-model="dialog.signup" @submit="submitSignup">
       <template #content>
-        <el-form class="dialog-content" id="form-register" label-width="80px">
-          <el-form-item label="用户名">
-            <el-input class="input-light" name="username" v-model="data.signup.username"></el-input>
+        <el-form class="signup-form dialog-content" id="form-register" label-width="40px">
+          <el-form-item label="邮箱">
+            <el-input class="input-light" type="email" v-model="data.signup.email" required clearable></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input class="input-light" name="password" type="password" v-model="data.signup.password"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码">
-            <el-input
-                class="input-light"
-                name="password_confirmation"
-                type="password"
-                v-model="data.signup.password_confirmation"></el-input>
+            <el-input class="input-light" type="password" v-model="data.signup.password" required clearable show-password></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -85,18 +78,18 @@
         title="找回密码"
         v-model="dialog.retrieve">
       <template #content>
-        <el-form class="dialog-content" id="form-login" label-width="60px">
+        <el-form class="retrieve-form dialog-content" id="form-login" label-width="60px">
 
-          <el-form-item label="用户名">
-            <el-input class="input-light" name="username" v-model="data.retrieve.username"></el-input>
+          <el-form-item label="邮箱">
+            <el-input class="input-light" type="email" v-model="data.retrieve.email" required clearable></el-input>
           </el-form-item>
           <el-form-item label="验证码">
-            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password"/>
-            <el-button type="primary">发送验证码</el-button>
+            <el-input class="input-light" type="password" v-model="data.retrieve.password" required clearable show-password/>
+            <el-button type="primary" round>发送验证码</el-button>
           </el-form-item>
 
           <el-form-item label="新密码">
-            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password"/>
+            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password" required clearable show-password/>
           </el-form-item>
 
         </el-form>
@@ -142,12 +135,12 @@ export default class Navigator extends Vue {
   public data = {
     searcher: '',
     signup: {
-      username: '',
+      email: '',
       password: '',
       password_confirmation: ''
     },
     retrieve: {
-      username: '',
+      email: '',
       password: ''
     }
   }
@@ -158,6 +151,8 @@ export default class Navigator extends Vue {
   }
 
   public submitSignup(){
+    let form=document.querySelector(".signup-form") as HTMLFormElement;
+    if(!form.reportValidity())return;
     Request.inst({
       url: 'register',
       method: 'post',

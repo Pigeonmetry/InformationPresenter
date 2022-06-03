@@ -5,12 +5,24 @@
         <div class="card">
           <div class="content">
             <span>登录</span>
-            <el-form label-width="60px">
-              <el-form-item label="用户名">
-                <el-input class="input-light" name="username" v-model="data.login.username"></el-input>
+            <el-form class="login-form">
+              <el-form-item>
+                <el-input class="input-light" type="email" v-model="data.login.email" required clearable>
+                  <template #prefix>
+                    <el-icon color="#1890ff" size="24px" class="el-input__icon">
+                      <User/>
+                    </el-icon>
+                  </template>
+                </el-input>
               </el-form-item>
-              <el-form-item label="密码">
-                <el-input class="input-light" name="password" type="password" v-model="data.login.password"></el-input>
+              <el-form-item>
+                <el-input class="input-light" type="password" v-model="data.login.password" required clearable show-password>
+                  <template #prefix>
+                    <el-icon color="#1890ff" size="24px" class="el-input__icon">
+                      <Unlock/>
+                    </el-icon>
+                  </template>
+                </el-input>
               </el-form-item>
             </el-form>
             <el-button class="button" @click="submitLogin" style="--el-button-hover-bg-color: var(--hover-bg-color)"
@@ -31,11 +43,7 @@ import {Vue} from "vue-class-component";
 import Request from "../api/Request";
 import store from "../store";
 import {ElMessage} from "element-plus";
-
-enum DialogType {
-  login,
-  signup
-}
+import qs from "qs";
 
 export default class LoginView extends Vue {
 
@@ -49,17 +57,14 @@ export default class LoginView extends Vue {
 
   private data = {
     login: {
-      username: '',
+      email: '',
       password: ''
-    },
-    signup: {
-      username: '',
-      password: '',
-      password_confirmation: ''
     }
   }
 
   public submitLogin() {
+    let form=document.querySelector(".login-form") as HTMLFormElement;
+    if(!form.reportValidity())return;
     Request.inst({
       url: "/login",
       method: "post",
@@ -131,6 +136,10 @@ export default class LoginView extends Vue {
 
 .content > .el-button {
   margin-bottom: 50px;
+}
+
+.login-form{
+  width: 280px;
 }
 
 .el-form-item {
