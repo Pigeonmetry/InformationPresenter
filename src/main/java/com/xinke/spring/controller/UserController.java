@@ -67,6 +67,7 @@ public class UserController {
             model.addAttribute("msg", "登录成功");
             model.addAttribute("status","ok");
             //保存用户email
+            session.setAttribute("username",user.getUsername());
              session.setAttribute("email",user.getEmail());
              session.setAttribute("password",user.getPassword());
              user = userService.seleteAll(email);
