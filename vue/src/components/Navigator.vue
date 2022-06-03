@@ -4,7 +4,7 @@
       <!--左侧-->
       <div class="left">
         <!--标题图片-->
-        <div class="logo" @click="this.$router.push('/')">
+        <div class="logo">
           <svg t="1653983164086" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
                p-id="1899" width="200" height="200">
             <path
@@ -44,7 +44,7 @@
             :ellipsis="false">
           <el-menu-item v-show="!isLogin" index="1" @click="dialog.retrieve=true">找回密码</el-menu-item>
           <el-menu-item v-show="!isLogin" index="2" @click="dialog.signup=true">注册</el-menu-item>
-          <el-menu-item v-show="isLogin" index="3" @click="dialog.login=true">退出登录</el-menu-item>
+          <el-menu-item v-show="isLogin" index="3" @click="logout">退出登录</el-menu-item>
         </el-menu>
         <!--        <el-input-->
         <!--            class="searcher"-->
@@ -68,7 +68,13 @@
             <el-input class="input-light" type="email" v-model="data.signup.email" required clearable></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input class="input-light" type="password" v-model="data.signup.password" required clearable show-password></el-input>
+            <el-input class="input-light"
+                      type="password"
+                      v-model="data.signup.password"
+                      required
+                      clearable
+                      show-password
+                      @keyup.enter="submitSignup"></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -84,12 +90,14 @@
             <el-input class="input-light" type="email" v-model="data.retrieve.email" required clearable></el-input>
           </el-form-item>
           <el-form-item label="验证码">
-            <el-input class="input-light" type="password" v-model="data.retrieve.password" required clearable show-password/>
+            <el-input class="input-light" type="password" v-model="data.retrieve.password" required clearable
+                      show-password/>
             <el-button type="primary" round>发送验证码</el-button>
           </el-form-item>
 
           <el-form-item label="新密码">
-            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password" required clearable show-password/>
+            <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password" required
+                      clearable show-password/>
           </el-form-item>
 
         </el-form>
@@ -104,8 +112,8 @@ import {Search} from "@element-plus/icons-vue";
 import Dialog from "./Dialog.vue";
 import store from "../store";
 import Request from "../api/Request";
-import {ElMessage} from "element-plus";
 import qs from "qs";
+import {ElMessage} from "element-plus";
 
 interface Response {
   status: string,
@@ -150,16 +158,17 @@ export default class Navigator extends Vue {
     signup: false,
   }
 
-  public submitSignup(){
-    let form=document.querySelector(".signup-form") as HTMLFormElement;
-    if(!form.reportValidity())return;
+  public submitSignup() {
+    let form = document.querySelector(".signup-form") as HTMLFormElement;
+    if (!form.reportValidity()) return;
     Request.inst({
       url: 'register',
       method: 'post',
       data: qs.stringify(this.data.signup),
     }).then(res => {
       console.log(res);
-      let resp=res.data;
+      let resp = res.data;
+      console.log(resp.msg);
       ElMessage({
         message: resp.msg,
         type: resp.status == "ok" ? 'success' : 'error',
@@ -177,6 +186,11 @@ export default class Navigator extends Vue {
       })
     });
   }
+
+  public logout() {
+    store.commit('logout');
+    this.$router.replace('/');
+  }
 }
 </script>
 
@@ -190,6 +204,7 @@ export default class Navigator extends Vue {
 .navigator {
   height: 100%;
   color: var(--text-color);
+  background-color: var(--bg-color);
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -208,7 +223,6 @@ export default class Navigator extends Vue {
 }
 
 .logo {
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
 }

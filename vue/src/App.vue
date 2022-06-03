@@ -14,8 +14,31 @@
 <script lang="ts">
 
 import {Vue} from "vue-class-component";
+import store from "./store";
+import Request from "./api/Request";
 
 export default class App extends Vue {
+
+  mounted() {
+    this.checkLogin();
+  }
+
+  private async checkLogin() {
+    let res = await Request.inst({
+      url: 'login/test',
+      method: 'post',
+    });
+    if (res.data) {
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (userInfo) {
+        store.state.userInfo = userInfo;
+        await this.$router.replace("/info");
+      }
+    } else {
+      store.commit('setUserInfo', null);
+    }
+  }
+
 }
 
 </script>
@@ -41,7 +64,7 @@ export default class App extends Vue {
   text-align: center;
 }
 
-.root{
+.root {
   height: 100%;
 }
 

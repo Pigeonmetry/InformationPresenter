@@ -7,6 +7,7 @@ import store from "./store/index";
 import ElementPlus from 'element-plus'
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'element-plus/es/components/message/style/css'
 
 import "./assets/css/global.css";
 

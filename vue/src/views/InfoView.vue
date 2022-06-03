@@ -5,21 +5,21 @@
     </div>
     <div class="header">
       <div class="icon-box">
-        <el-avatar class="icon">
+        <el-avatar class="icon" :src="avatar" @error="handleAvatarLoadError">
           <el-icon class="el-avatar--icon" :size="120">
-            <embed id="avatar">
             <UserFilled/>
-            <embed>
           </el-icon>
         </el-avatar>
         <el-upload
             class="icon-mask"
-            action="http://localhost:8081/api/upload"
+            name="Img"
+            :action="uploadUrl"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
+            :on-error="handleAvatarError"
             :before-upload="beforeAvatarUpload"
         >
-          <el-icon :size="60" color="#1890ff">
+          <el-icon :size="60" color="#1890ffdc">
             <Upload/>
           </el-icon>
         </el-upload>
@@ -172,12 +172,23 @@ interface Response {
 export default class InfoView extends Vue {
 
   mounted() {
-    // if(!store.state.userInfo) this.$router.replace("/login");
-    // else this.data = store.state.userInfo;
+    if (!store.state.userInfo) this.$router.replace("/login");
+    else {
+      this.data = store.state.userInfo;
+      this.avatar = this.baseUrl + "avatar/get";
+    }
   }
 
   public get username() {
-    return store.state.userInfo?.username ?? '未知';
+    return store.state.userInfo?.email ?? '未知';
+  }
+
+  private get baseUrl() {
+    return Request.inst.defaults.baseURL;
+  }
+
+  public get uploadUrl() {
+    return this.baseUrl + "avatar/upload";
   }
 
   private data: any = {
@@ -198,6 +209,8 @@ export default class InfoView extends Vue {
     key: '',
     data: '',
   }
+
+  private avatar: string = '';
 
   private changed = false;
 
@@ -237,19 +250,44 @@ export default class InfoView extends Vue {
     }).catch((err) => {
       console.log(err);
       ElMessage({
-        message: err.messages,
+        message: err.message,
         type: 'error',
         duration: 1000,
       })
     });
   }
 
+  public handleAvatarLoadError(): boolean {
+    ElMessage({
+      message: '头像加载失败',
+      type: 'error',
+      duration: 1000,
+    });
+    return true;
+  }
+
   private handleAvatarSuccess: UploadProps["onSuccess"] = (
       response,
       uploadFile
   ) => {
-    let avatar = document.querySelector("#avatar") as HTMLEmbedElement
-    avatar.src = URL.createObjectURL(uploadFile.raw);
+    this.avatar = URL.createObjectURL(uploadFile.raw);
+    console.log(this.avatar)
+    ElMessage({
+      message: response.msg,
+      type: response.status == "ok" ? 'success' : 'error',
+      duration: 1000,
+    })
+  }
+
+  private handleAvatarError: UploadProps["onError"] = (
+      err
+  ) => {
+    console.log(err);
+    ElMessage({
+      message: '上传失败',
+      type: 'error',
+      duration: 1000,
+    })
   }
 
   private beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
@@ -273,16 +311,17 @@ export default class InfoView extends Vue {
 }
 
 .root {
+  background-color: #e6f7ff;
   margin: 30px auto;
   border-radius: 20px;
-  box-shadow: 0 10px 20px gray;
+  box-shadow: 0 10px 20px lightgray;
   overflow: auto;
   border: 3px solid var(--bg-color);
 }
 
 .top-bar {
-  height: 180px;
-  background-color: var(--hover-bg-color);
+  height: 120px;
+  background-image: linear-gradient(to left bottom, var(--bg-color), var(--hover-bg-color));
   display: flex;
   align-items: flex-end;
 }
@@ -320,8 +359,7 @@ export default class InfoView extends Vue {
 
 .icon-mask {
   font-size: 20px;
-  background-color: var(--bg-color);
-  opacity: 0.6;
+  background-color: #bae7ff88;
   border-radius: 50%;
   display: none;
   justify-content: center;
@@ -347,6 +385,8 @@ export default class InfoView extends Vue {
 
 .comment {
   --el-input-text-color: none;
+  --el-input-bg-color: #eff;
+  --el-fill-color-blank: #eff;
   --el-input-border-color: var(--input-border-color);
   --el-input-hover-border-color: var(--input-border-focus-color);
 }
