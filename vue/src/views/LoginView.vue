@@ -71,9 +71,8 @@ export default class LoginView extends Vue {
       data: qs.stringify(this.data.login)
     }).then(res => {
       console.log(res);
-      let resp = JSON.parse(res.data);
-      if (resp.status == "success") {
-        let userInfo = resp.data;
+      if (res.status == "success") {
+        let userInfo = res.data;
         store.commit('setUserInfo', userInfo);
         ElMessage({
           message: '登录成功',

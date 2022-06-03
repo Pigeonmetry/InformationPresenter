@@ -159,13 +159,13 @@ export default class Navigator extends Vue {
       data: qs.stringify(this.data.signup),
     }).then(res => {
       console.log(res);
-      let resp = JSON.parse(res.data) as Response;
+      let resp=res.data;
       ElMessage({
         message: resp.msg,
-        type: resp.status == "success" ? 'success' : 'error',
+        type: resp.status == "ok" ? 'success' : 'error',
         duration: 1000,
       })
-      if (resp.status == "success") {
+      if (resp.status == "ok") {
         this.dialog.signup = false;
       }
     }).catch(err => {
