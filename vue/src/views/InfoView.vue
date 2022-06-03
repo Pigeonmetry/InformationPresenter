@@ -224,13 +224,13 @@ export default class InfoView extends Vue {
       method: 'post',
     }).then((res) => {
       console.log(res);
-      let resp = JSON.parse(res.data) as Response;
+      let resp = res.data as Response;
       ElMessage({
         message: resp.msg,
-        type: resp.status == "success" ? 'success' : 'error',
+        type: resp.status == "ok" ? 'success' : 'error',
         duration: 1000,
       })
-      if (resp.status == "success") {
+      if (resp.status == "ok") {
         this.changed = false;
         store.commit('setUserInfo', this.data);
       }
