@@ -30,6 +30,10 @@
     margin: 0 !important;
 }
 
+.el-avatar{
+    --el-text-color-disabled: #b5f5ec;
+}
+
 .el-input {
     --el-input-hover-text-color: var(--text-color);
     --el-input-border-radius: 30px;
