@@ -49,5 +49,4 @@ export default class App extends Vue {
   width: 100%;
   padding: 0;
 }
-
 </style>
