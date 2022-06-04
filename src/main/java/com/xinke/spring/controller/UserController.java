@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.xinke.spring.bean.User;
 import com.xinke.spring.config.MailHelper;
 import com.xinke.spring.service.UserService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Administrator
@@ -210,7 +212,7 @@ public class UserController {
             return new ResponseEntity<byte[]>(body, httpHeaders, status);
         }
     }
-
+    ThreadFactory namedThreadFactory = new ThreadFactoryBuilder();
     @ResponseBody
     @RequestMapping("/code")
     public String code(@Param("email")String email, Model model, HttpSession session) throws GeneralSecurityException, MessagingException {
@@ -218,7 +220,13 @@ public class UserController {
         String code = String.valueOf(v);
         session.setAttribute("code",code);
         MailHelper hlpers = new MailHelper("smtp.qq.com","865212021@qq.com","kwssmmasfjasbaii");
+        new Thread(new Runnable(){
+            @Override
+            @SneakyThrows
+            public void run(){
         hlpers.sendMail(email,"验证码查收",code);
+            }
+        }).start();
         if(userService.seleteEmail(email)==null){
             model.addAttribute("msg","请确认，邮箱没注册");
         }
@@ -231,12 +239,7 @@ public class UserController {
             if(midTime == 0) {
                 model.addAttribute("msg", "请重新发送验证码");
             }
-            try {
-                Thread.sleep(1000);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         model.addAttribute("msg","验证码已发送,请查收");
         model.addAttribute("status","ok");
