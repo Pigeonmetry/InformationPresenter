@@ -28,14 +28,14 @@ export default class App extends Vue {
       url: 'login/test',
       method: 'post',
     });
-    if (res.data) {
+    if (res.data?.status == "ok") {
       let userInfo = JSON.parse(localStorage.getItem("userInfo"));
       if (userInfo) {
         store.state.userInfo = userInfo;
         await this.$router.replace("/info");
       }
     } else {
-      store.commit('setUserInfo', null);
+      store.commit('logout');
     }
   }
 
