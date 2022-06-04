@@ -149,6 +149,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value="/info/update")
     public String message(HttpSession session,Model model,@RequestParam Map<Object, String> params){
+        System.out.println("返回信息"+params);
         String username = params.get("username");
         String sex = params.get("sex");
         String phone = params.get("phone");
@@ -166,7 +167,7 @@ public class UserController {
             return str;
         }
         else {
-            userService.insertUser((String) session.getAttribute("email"),username,sex,phone,height,skills,education,school,address,text);
+            userService.insertUser((String) session.getAttribute("email"),username,sex,phone,height,skills,text,education,school,address);
             User u = userService.seleteAll((String) session.getAttribute("email"));
             model.addAttribute("msg", "成功修改");
             model.addAttribute("status","ok");
@@ -218,13 +219,13 @@ public class UserController {
      * @throws IOException
      */
     @RequestMapping(value="/avatar/get")
-    public Object download(HttpSession session) throws IOException {
+    public Object download(HttpSession session,MultipartFile headerImg) throws IOException {
         // 指定下载文件
         String path ="C:\\spring\\spring\\src\\main\\resources\\static\\File\\"+session.getAttribute("email")+".jpg";
         String path2 ="C:\\spring\\spring\\src\\main\\resources\\static\\File\\"+"null"+".jpg";
         File file = new File(path);
         File file2 = new File(path2);
-        if(file.isFile()&&!file.exists()){
+        if(!file.exists()){
             InputStream fileInputStream2 = new FileInputStream(file2);
             byte[] body2 = new byte[fileInputStream2.available()];
             fileInputStream2.read(body2);
@@ -270,8 +271,8 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/code")
     public String code(@Param("email")String email, Model model, HttpSession session) throws GeneralSecurityException, MessagingException {
-        int v = (int)(Math.random()*1000000);
-        String code = String.format("%06d",v);
+
+        String code = String.format("%06d",(int)(Math.random()*1000000));
         session.setAttribute("code",code);
         MailHelper hlpers = new MailHelper("smtp.qq.com","865212021@qq.com","kwssmmasfjasbaii");
         new Thread(new Runnable(){
@@ -287,14 +288,14 @@ public class UserController {
         else{
             session.setAttribute("email",email);
         }
-        while (midTime > 0) {
-            midTime--;
-            long ss = midTime % 60;
-            if(midTime == 0) {
-                model.addAttribute("msg", "请重新发送验证码");
-            }
-
-        }
+//        while (midTime > 0) {
+//            midTime--;
+//            long ss = midTime % 60;
+//            if(midTime == 0) {
+//                model.addAttribute("msg", "请重新发送验证码");
+//            }
+//
+//        }
         model.addAttribute("msg","验证码已发送,请查收");
         model.addAttribute("status","ok");
 
@@ -315,8 +316,7 @@ public class UserController {
         String password = params.get("password");
         String email = params.get("email");
         String otp  = params.get("otp");
-        String.format("%06d",otp);
-        String code = (String)session.getAttribute("code");
+        String code = String.valueOf(session.getAttribute("code"));
         System.out.println("验证码"+code);
         System.out.println(otp);
         if(email == null){
