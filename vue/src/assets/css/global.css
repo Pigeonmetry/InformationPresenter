@@ -28,6 +28,10 @@
     background-size: cover;
 }
 
+span{
+    cursor: default;
+}
+
 /* 全局设置 element ui dialog水平垂直居中 */
 .el-dialog {
     left: 50%;

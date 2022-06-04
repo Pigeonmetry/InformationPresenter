@@ -43,79 +43,81 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
     @ResponseBody
     @RequestMapping(value = {"/login/test"})
-    public String test( HttpSession session,Model model){
+    public String test(HttpSession session, Model model) {
         Object email = session.getAttribute("email");
         Gson gson = new Gson();
-        if(email==null){
-            model.addAttribute("status","ok");
+        if (email == null) {
+            model.addAttribute("status", "ok");
+            String str = gson.toJson(model);
+            return str;
+        } else {
+            model.addAttribute("status", "fail");
             String str = gson.toJson(model);
             return str;
         }
-        else{
-            model.addAttribute("status","fail");
-            String str = gson.toJson(model);
-            return str;}
     }
+
     @ResponseBody
     @RequestMapping("/login")
-    public String login(HttpSession session,Model model,@Param("email") String email,@Param("password") String password) {
-        User user = userService.login(email,password);
+    public String login(HttpSession session, Model model, @Param("email") String email, @Param("password") String password) {
+        User user = userService.login(email, password);
         Gson gson = new Gson();
         if (user != null && StringUtils.hasLength(password)) {
             model.addAttribute("msg", "登录成功");
-            model.addAttribute("status","ok");
+            model.addAttribute("status", "ok");
             //保存用户email
-            session.setAttribute("username",user.getUsername());
-             session.setAttribute("email",user.getEmail());
-             session.setAttribute("password",user.getPassword());
-             user = userService.seleteAll(email);
-            String str =gson.toJson(user);
+            session.setAttribute("username", user.getUsername());
+            session.setAttribute("email", user.getEmail());
+            session.setAttribute("password", user.getPassword());
+            user = userService.seleteAll(email);
+            String str = gson.toJson(user);
             return str;
-        }
-        else{
+        } else {
             model.addAttribute("msg", "登录失败");
-            model.addAttribute("status","fail");
-            String str =gson.toJson(model);
+            model.addAttribute("status", "fail");
+            String str = gson.toJson(model);
             return str;
         }
     }
+
     @ResponseBody
     @RequestMapping("/register")
-    public String register(HttpSession session,@Param("email")String email, @Param("password") String password,Model model) {
+    public String register(HttpSession session, @Param("email") String email, @Param("password") String password, Model model) {
         Gson gson = new Gson();
-        if(StringUtils.hasLength(email)==false){
+        if (StringUtils.hasLength(email) == false) {
             model.addAttribute("msg", "注册失败，邮箱未填写完整");
-            model.addAttribute("status","fail");
-            String str =gson.toJson(model);
+            model.addAttribute("status", "fail");
+            String str = gson.toJson(model);
             return str;
         }
-        if(StringUtils.hasLength(password)==false){
+        if (StringUtils.hasLength(password) == false) {
             model.addAttribute("msg", "注册失败，密码未填写完整");
-            model.addAttribute("status","fail");
-            String str =gson.toJson(model);
+            model.addAttribute("status", "fail");
+            String str = gson.toJson(model);
             return str;
         }
         User user = userService.seleteEmail(email);
         session.setAttribute("registerUser", user);
-        if(user !=null){
-             model.addAttribute("msg", "注册失败,邮箱已被注册");
-             model.addAttribute("status","fail");
-            String str =gson.toJson(model);
+        if (user != null) {
+            model.addAttribute("msg", "注册失败,邮箱已被注册");
+            model.addAttribute("status", "fail");
+            String str = gson.toJson(model);
             return str;
-        }
-        else{
-            userService.saveUser(email,password);
+        } else {
+            userService.saveUser(email, password);
             model.addAttribute("msg", "注册成功,您可以登录了");
-            model.addAttribute("status","ok");
-            String str =gson.toJson(model);
+            model.addAttribute("status", "ok");
+            String str = gson.toJson(model);
             return str;
         }
     }
+
     @ResponseBody
-    @RequestMapping(value="/info/update")
-    public String message(HttpSession session,Model model,@RequestParam Map<Object, String> params){
+    @RequestMapping(value = "/info/update")
+    public String message(HttpSession session, Model model, @RequestParam Map<Object, String> params) {
         String username = params.get("username");
         String sex = params.get("sex");
         String phone = params.get("phone");
@@ -128,19 +130,17 @@ public class UserController {
         User user = userService.seleteEmail((String) session.getAttribute("email"));
         if (user == null) {
             model.addAttribute("msg", "邮箱不存在,请重新确认或选择重新注册邮箱");
-            model.addAttribute("status","fail");
+            model.addAttribute("status", "fail");
             Gson gson = new Gson();
-            String str =gson.toJson(model);
-            return str;
-        }
-        else {
-            userService.insertUser((String) session.getAttribute("email"),username,sex,phone,height,skills,education,school,address,text);
+            return gson.toJson(model);
+        } else {
+            userService.insertUser((String) session.getAttribute("email"), username, sex, phone, height, skills, education, school, address, text);
             User u = userService.seleteAll((String) session.getAttribute("email"));
             Gson gson = new Gson();
-            String str =gson.toJson(u);
-            return str;
+            return gson.toJson(u);
         }
     }
+
     /**
      * MultipartFile 自动封装上传过来的文件
      *
@@ -148,27 +148,26 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/avatar/upload",produces = MediaType.IMAGE_JPEG_VALUE)
-    public String upload(Model model,HttpSession session,
+    @RequestMapping(value = "/avatar/upload", produces = MediaType.IMAGE_JPEG_VALUE)
+    public String upload(Model model, HttpSession session,
                          @RequestPart("Img") MultipartFile headerImg) throws IOException {
-        String path ="C:\\spring\\spring\\src\\main\\resources\\static\\File\\"+session.getAttribute("username")+".jpg";
+        String path = "C:\\spring\\spring\\src\\main\\resources\\static\\File\\" + session.getAttribute("username") + ".jpg";
         File file = new File(path);
         log.info("上传的信息：email={}，username={}，headerImg={}，photos={}",
-                 headerImg.getSize());
+                headerImg.getSize());
         if (!headerImg.isEmpty()) {
             String originalFilename = headerImg.getOriginalFilename();
             //路径是个文件且不为空时删除文件
-            if(file.isFile()&&file.exists()){
+            if (file.isFile() && file.exists()) {
                 file.delete();
             }
             //保存到文件服务器
             headerImg.transferTo(new File(path));
-            model.addAttribute("msg","上传成功");
-            model.addAttribute("status","ok");
-        }
-        else{
-            model.addAttribute("msg","失败");
-            model.addAttribute("status","fail");
+            model.addAttribute("msg", "上传成功");
+            model.addAttribute("status", "ok");
+        } else {
+            model.addAttribute("msg", "失败");
+            model.addAttribute("status", "fail");
         }
         FileInputStream inputStream = new FileInputStream(file);
         byte[] bytes = new byte[inputStream.available()];
@@ -178,10 +177,11 @@ public class UserController {
         String str = gson.toJson(model);
         return str;
     }
-    @RequestMapping(value="/avatar/get")
+
+    @RequestMapping(value = "/avatar/get")
     public ResponseEntity<byte[]> download(HttpSession session) throws IOException {
         // 指定下载文件
-        String path ="C:\\spring\\spring\\src\\main\\resources\\static\\File\\"+session.getAttribute("username")+".jpg";
+        String path = "C:\\spring\\spring\\src\\main\\resources\\static\\File\\" + session.getAttribute("username") + ".jpg";
         File file = new File(path);
         // 获取文件的输入流
         InputStream fileInputStream = new FileInputStream(file);
@@ -199,14 +199,15 @@ public class UserController {
         HttpStatus status = HttpStatus.OK;
         return new ResponseEntity<byte[]>(body, httpHeaders, status);
     }
+
     @ResponseBody
     @RequestMapping("/code")
-    public String code(@Param("email")String email,Model model) throws GeneralSecurityException {
-        int v = (int)(Math.random()*1000000);
+    public String code(@Param("email") String email, Model model) throws GeneralSecurityException {
+        int v = (int) (Math.random() * 1000000);
         String code = String.valueOf(v);
-        new MailHelper(email,"验证码查收",code);
-        model.addAttribute("msg","验证码已发送请查收");
-        model.addAttribute("status","ok");
+        new MailHelper(email, "验证码查收", code);
+        model.addAttribute("msg", "验证码已发送请查收");
+        model.addAttribute("status", "ok");
         Gson gson = new Gson();
         String str = gson.toJson(model);
         return str;
