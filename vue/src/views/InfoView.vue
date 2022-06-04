@@ -1,11 +1,11 @@
 <template>
   <div class="root container">
     <div class="top-bar">
-      <span class="username">{{ username }}</span>
+      <el-button class="username" text round @click="edit('username')">{{ data.username }}</el-button>
     </div>
     <div class="header">
       <div class="icon-box">
-        <el-avatar class="icon" :src="avatar" @error="handleAvatarLoadError">
+        <el-avatar class="icon" :key="avatar" :src="avatar" @error="handleAvatarLoadError">
           <el-icon class="el-avatar--icon" :size="120">
             <UserFilled/>
           </el-icon>
@@ -24,7 +24,7 @@
           </el-icon>
         </el-upload>
       </div>
-      <span style="font-size: 3ex;margin-left: 10px;margin-top: 5px;">ID:xxx</span>
+      <span style="font-size: 3ex;margin-left: 12px;margin-top: 5px;">ID:xxxxx</span>
     </div>
     <div class="content">
       <el-form label-width="100px">
@@ -65,7 +65,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item @click="edit('email')">
+            <el-form-item class="no-click">
               <template #label>
                 <el-icon :size="20">
                   <Message/>
@@ -124,24 +124,21 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item class="no-click">
+        <el-form-item class="no-click" @click="richEditor=true">
           <template #label>
             <el-icon :size="20">
               <Comment/>
             </el-icon>
             <span>简介</span>
           </template>
-          <el-input
-              class="comment"
+          <editor
+              id="rich-editor"
               v-model="data.text"
-              @change="this.changed=true"
-              type="textarea"
-              maxlength="200"
-              resize="none"
-              rows="8"
-              show-word-limit/>
+              api-key="hjuzlcxdwdlr1z0enadsllgmsjldgww9y2lqf7cc6cqz8wa6"
+              :init="richOptions"
+          />
         </el-form-item>
-        <el-button type="primary" :disabled="!changed" @click="submitUpdate" round>保存修改</el-button>
+        <el-button type="primary" ::disabled="!changed" @click="submitUpdate" round>保存修改</el-button>
       </el-form>
     </div>
     <!-- 一般信息修改弹窗 -->
@@ -157,11 +154,12 @@
 </template>
 <script lang="ts">
 
-import {Vue} from "vue-class-component";
+import {Options, Vue} from "vue-class-component";
 import store from "../store";
 import Request from "../api/Request";
 import {ElMessage, UploadProps} from "element-plus";
 import qs from "qs";
+import Editor from '@tinymce/tinymce-vue';
 
 interface Response {
   status: string,
@@ -169,29 +167,32 @@ interface Response {
   msg: string;
 }
 
+@Options({
+  components: {
+    'editor': Editor,
+  },
+})
 export default class InfoView extends Vue {
 
   mounted() {
+    document.title = "个人信息";
     if (!store.state.userInfo) this.$router.replace("/login");
     else {
       this.data = store.state.userInfo;
-      this.avatar = this.baseUrl + "avatar/get";
+      this.avatar = InfoView.baseUrl + "avatar/get?date=" + Date.now();
     }
   }
 
-  public get username() {
-    return store.state.userInfo?.email ?? '未知';
-  }
-
-  private get baseUrl() {
+  private static get baseUrl() {
     return Request.inst.defaults.baseURL;
   }
 
   public get uploadUrl() {
-    return this.baseUrl + "avatar/upload";
+    return InfoView.baseUrl + "avatar/upload";
   }
 
   private data: any = {
+    username: "XXX",
     sex: '未知',
     height: '未知',
     phone: '未知',
@@ -201,6 +202,24 @@ export default class InfoView extends Vue {
     address: '未知',
     skills: '未知',
     text: '这个人很懒\n什么都没有写...',
+  }
+
+  private richOptions = {
+    height: 500,
+    width: 800,
+    menubar: false,
+    language: 'zh_CN',
+    selector: '#rich-editor',
+    inline: true,
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount',
+    ],
+    toolbar: 'undo redo | styleselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | outdent indent | removeformat | help',
+    setup(editor){
+      console.log(editor)
+    }
   }
 
   private editor = {
@@ -231,6 +250,7 @@ export default class InfoView extends Vue {
   }
 
   public submitUpdate() {
+    console.log(this.data);
     Request.inst({
       url: 'info/update',
       data: qs.stringify(this.data),
@@ -328,8 +348,9 @@ export default class InfoView extends Vue {
 
 .username {
   font-size: 2em;
-  margin-left: 168px;
-  margin-bottom: 10px;
+  margin-left: 152px;
+  --el-fill-color-light: var(--bg-color);
+  --text-color: #36cfc9;
 }
 
 .header {
@@ -383,12 +404,15 @@ export default class InfoView extends Vue {
   cursor: pointer;
 }
 
-.comment {
-  --el-input-text-color: none;
-  --el-input-bg-color: #eff;
-  --el-fill-color-blank: #eff;
-  --el-input-border-color: var(--input-border-color);
-  --el-input-hover-border-color: var(--input-border-focus-color);
+#rich-editor {
+  min-width: 100%;
+  min-height: 300px;
+  text-align: left;
+}
+
+#rich-editor:hover {
+  background-color: var(--hover-bg-color);
+  cursor: pointer;
 }
 
 </style>

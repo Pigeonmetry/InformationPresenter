@@ -44,7 +44,8 @@
             :ellipsis="false">
           <el-menu-item v-show="!isLogin" index="1" @click="dialog.retrieve=true">找回密码</el-menu-item>
           <el-menu-item v-show="!isLogin" index="2" @click="dialog.signup=true">注册</el-menu-item>
-          <el-menu-item v-show="isLogin" index="3" @click="logout">退出登录</el-menu-item>
+          <el-menu-item v-show="isLogin" index="3" @click="dialog.modify=true">修改密码</el-menu-item>
+          <el-menu-item v-show="isLogin" index="4" @click="logout">退出登录</el-menu-item>
         </el-menu>
         <!--        <el-input-->
         <!--            class="searcher"-->
@@ -61,9 +62,9 @@
       </div>
     </div>
     <!--注册弹窗-->
-    <Dialog title="注册" v-model="dialog.signup" @submit="submitSignup">
+    <Dialog title="注册" v-model="dialog.signup" @submit="submitDefault('signup')">
       <template #content>
-        <el-form class="signup-form dialog-content" id="form-register" label-width="40px">
+        <el-form class="dialog-content" id="form-signup" label-width="40px">
           <el-form-item label="邮箱">
             <el-input class="input-light" type="email" v-model="data.signup.email" required clearable></el-input>
           </el-form-item>
@@ -74,30 +75,49 @@
                       required
                       clearable
                       show-password
-                      @keyup.enter="submitSignup"></el-input>
+                      @keyup.enter="submitDefault('signup')"></el-input>
           </el-form-item>
+        </el-form>
+      </template>
+    </Dialog>
+    <!--修改密码弹窗-->
+    <Dialog
+        title="修改密码"
+        v-model="dialog.modify"
+        @submit="submitDefault('modify')">
+      <template #content>
+        <el-form class="dialog-content" id="form-modify" label-width="60px">
+
+          <el-form-item label="新密码">
+            <el-input class="input-light" name="password" type="password" v-model="data.modify.password" required
+                      clearable show-password @keyup.enter="submitDefault('modify')"/>
+          </el-form-item>
+
         </el-form>
       </template>
     </Dialog>
     <!--找回密码弹窗-->
     <Dialog
         title="找回密码"
-        v-model="dialog.retrieve">
+        v-model="dialog.retrieve"
+        @submit="submitDefault('retrieve')">
       <template #content>
-        <el-form class="retrieve-form dialog-content" id="form-login" label-width="60px">
+        <el-form class="dialog-content" id="form-retrieve" label-width="60px">
 
           <el-form-item label="邮箱">
-            <el-input class="input-light" type="email" v-model="data.retrieve.email" required clearable></el-input>
+            <el-input id="otp-email" class="input-light" type="email" v-model="data.retrieve.email" required
+                      clearable></el-input>
           </el-form-item>
           <el-form-item label="验证码">
-            <el-input class="input-light" type="password" v-model="data.retrieve.password" required clearable
-                      show-password/>
-            <el-button type="primary" round>发送验证码</el-button>
+            <el-input class="input-light" v-model="data.retrieve.otp" required clearable/>
+            <el-button type="primary" :disabled="data.timeout.disable" round @click="sendOtp">
+              发送验证码{{ data.timeout.count ? `(${data.timeout.count})` : '' }}
+            </el-button>
           </el-form-item>
 
           <el-form-item label="新密码">
             <el-input class="input-light" name="password" type="password" v-model="data.retrieve.password" required
-                      clearable show-password/>
+                      clearable show-password @keyup.enter="submitDefault('retrieve')"/>
           </el-form-item>
 
         </el-form>
@@ -149,33 +169,49 @@ export default class Navigator extends Vue {
     },
     retrieve: {
       email: '',
-      password: ''
+      otp: '',
+      password: '',
+    },
+    modify: {
+      password: '',
+    },
+    timeout: {
+      count: 0,
+      disable: false,
     }
   }
 
   public dialog = {
     retrieve: false,
     signup: false,
+    modify: false,
   }
 
-  public submitSignup() {
-    let form = document.querySelector(".signup-form") as HTMLFormElement;
+  public logout() {
+    store.commit('logout');
+    this.$router.replace('/');
+  }
+
+  public submitDefault(name: string) {
+    let form = document.querySelector(`#form-${name}`) as HTMLFormElement;
     if (!form.reportValidity()) return;
     Request.inst({
-      url: 'register',
+      url: name,
       method: 'post',
-      data: qs.stringify(this.data.signup),
+      data: qs.stringify(this.data[name]),
     }).then(res => {
       console.log(res);
-      let resp = res.data;
-      console.log(resp.msg);
+      let resp = res.data as Response;
       ElMessage({
         message: resp.msg,
         type: resp.status == "ok" ? 'success' : 'error',
         duration: 1000,
       })
       if (resp.status == "ok") {
-        this.dialog.signup = false;
+        this.dialog[name] = false;
+        if (name == 'modify') {
+          this.logout();
+        }
       }
     }).catch(err => {
       console.log(err);
@@ -187,9 +223,42 @@ export default class Navigator extends Vue {
     });
   }
 
-  public logout() {
-    store.commit('logout');
-    this.$router.replace('/');
+  public sendOtp() {
+    let email = document.querySelector("#otp-email") as HTMLInputElement;
+    if (!email.reportValidity()) return;
+    Request.inst({
+      url: 'code',
+      method: 'post',
+      data: qs.stringify({
+        email: this.data.retrieve.email
+      }),
+    }).then(res => {
+      console.log(res);
+      let resp = res.data;
+      ElMessage({
+        message: resp.msg,
+        type: resp.status == "ok" ? 'success' : 'error',
+        duration: 1000,
+      })
+      if (resp.status == "ok") {
+        this.data.timeout.disable = true;
+        this.data.timeout.count = 60;
+        let timer = setInterval(() => {
+          this.data.timeout.count--;
+          if (this.data.timeout.count == 0) {
+            clearInterval(timer);
+            this.data.timeout.disable = false;
+          }
+        }, 1000);
+      }
+    }).catch(err => {
+      console.log(err);
+      ElMessage({
+        message: err.message,
+        type: 'error',
+        duration: 1000,
+      })
+    });
   }
 }
 </script>

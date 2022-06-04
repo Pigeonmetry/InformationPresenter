@@ -1,31 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-<h1>欢迎</h1>
-登录
-<form method="get" th:action="@{/api/login}">
-  <label style="color: #ff0000" th:text="${msg}"></label><br>
-  <input type="text" placeholder="user login" name="email" id="email" >
-  <input type="password" placeholder="password" name="password" id="password" >
-  <input type="submit" value="login">
-</form>
-注册
-<form method="post" action="/api/register">
-  <label style="color: red" th:text="${msg}"></label><br>
-  <input type="text" placeholder="user register" name="email" id="email1" >
-  <input type="password" placeholder="password" name="password" id="password1" >
-  <input type="submit" value="register">
-</form><br>
-<form method="post" action="/api/avatar/upload" enctype="multipart/form-data">
-  <input type="text" placeholder="username" name="username" id="username" >
-  <label for="InputFile">照片</label>
-  <input type="file" name="Img" id="InputFile" >
-  <input type="submit" value="upload">
-</form>
-
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+    <script type="module" crossorigin src="/assets/index.e2da36dd.js"></script>
+    <link rel="stylesheet" href="/assets/index.5b0c5e93.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    
+  </body>
 </html>

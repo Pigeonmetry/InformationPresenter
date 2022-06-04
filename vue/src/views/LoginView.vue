@@ -54,6 +54,10 @@ interface Response {
 
 export default class LoginView extends Vue {
 
+  mounted(){
+    document.title="登录"
+  }
+
   private data = {
     login: {
       email: '',
@@ -71,8 +75,8 @@ export default class LoginView extends Vue {
     }).then(res => {
       console.log(res);
       let resp = res.data;
-      if (!resp.status) {
-        store.commit('setUserInfo', resp);
+      if (resp.status == "ok") {
+        store.commit('setUserInfo', resp.data);
         ElMessage({
           message: '登录成功',
           type: 'success',
