@@ -124,7 +124,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item class="no-click" @click="richEditor=true">
+        <el-form-item class="no-click">
           <template #label>
             <el-icon :size="20">
               <Comment/>
@@ -178,7 +178,7 @@ export default class InfoView extends Vue {
     document.title = "个人信息";
     if (!store.state.userInfo) this.$router.replace("/login");
     else {
-      this.data = store.state.userInfo;
+      Object.assign(this.data,store.state.userInfo);
       this.avatar = InfoView.baseUrl + "avatar/get?date=" + Date.now();
     }
   }
@@ -217,9 +217,6 @@ export default class InfoView extends Vue {
       'insertdatetime media table paste code help wordcount',
     ],
     toolbar: 'undo redo | styleselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | outdent indent | removeformat | help',
-    setup(editor){
-      console.log(editor)
-    }
   }
 
   private editor = {
