@@ -7,6 +7,12 @@ spring:
     password: 123456a
     driver-class-name: com.mysql.cj.jdbc.Driver
     server:
+      servlet:
+        session:
+          cookie:
+            same-site: "none"
       tomcat:
         uri-encoding : UTF-8
+
+
 #Debug: true

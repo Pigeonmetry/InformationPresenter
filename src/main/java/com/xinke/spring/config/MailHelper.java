@@ -1,4 +1,4 @@
-package com.xinke.spring.controller;
+package com.xinke.spring.config;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 import lombok.var;
@@ -33,6 +33,9 @@ public class MailHelper extends Authenticator {
         props.put("mail.smtp.ssl.enable", "true");
         props.put("mail.smtp.ssl.socketFactory", sf);
     }
+
+
+
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
