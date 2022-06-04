@@ -51,7 +51,10 @@ public interface UserMapper{
     int insertUser(String email,String username,String sex ,String phone,
                    String height,String skills,String text,
                    String education,String school,String address);
+
     @Select("select * from tab_user where email=#{email}")
     User seleteAll(@Param("email") String email);
 
+    @Insert("UPDATE  tab_user SET password= #{password} where email =#{email};")
+    int getpassword(String email,String password);
 }

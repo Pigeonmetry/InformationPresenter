@@ -47,4 +47,12 @@ public interface UserService {
      * @return user
      */
     User seleteAll(@Param("email") String email);
+
+    /**
+     * 找回密码
+     * @param email
+     * @param password
+     * @return
+     */
+    int getpassword(String email,String password);
 }

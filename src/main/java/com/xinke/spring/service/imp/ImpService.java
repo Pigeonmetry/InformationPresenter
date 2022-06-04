@@ -48,5 +48,10 @@ public class ImpService implements UserService {
         return u;
     }
 
+    @Override
+    public int getpassword(String email, String password) {
+        return userMapper.getpassword(email, password);
+    }
+
 
 }
