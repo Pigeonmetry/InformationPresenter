@@ -147,7 +147,7 @@
         :title="editor.title"
         @submit="commit">
       <template #content>
-        <el-input v-model="editor.data"/>
+        <el-input minlength="6" maxlength="16"  v-model="editor.data"/>
       </template>
     </Dialog>
   </div>
@@ -160,6 +160,7 @@ import Request from "../api/Request";
 import {ElMessage, UploadProps} from "element-plus";
 import qs from "qs";
 import Editor from '@tinymce/tinymce-vue';
+import * as assert from "assert";
 
 interface Response {
   status: string,
@@ -178,9 +179,34 @@ export default class InfoView extends Vue {
     document.title = "个人信息";
     if (!store.state.userInfo) this.$router.replace("/login");
     else {
-      Object.assign(this.data,store.state.userInfo);
-      this.avatar = InfoView.baseUrl + "avatar/get?date=" + Date.now();
+      Object.assign(this.data, store.state.userInfo);
+      this.requestAvatar();
     }
+  }
+
+  private async requestAvatar() {
+    Request.inst({
+      url: 'avatar/get',
+      method: 'post',
+      headers: {
+        'Accept': 'image/jpeg,image/png',
+      },
+      responseType: 'blob',
+    }).then(res => {
+      console.log(res);
+      if (res.data.size > 0) {
+        this.avatar = URL.createObjectURL(res.data);
+      }else {
+        this.avatar = '';
+      }
+    }).catch(err => {
+      console.log(err)
+      ElMessage({
+        message: '获取头像失败',
+        type: 'error',
+        duration: 1000,
+      });
+    })
   }
 
   private static get baseUrl() {
@@ -274,7 +300,8 @@ export default class InfoView extends Vue {
     });
   }
 
-  public handleAvatarLoadError(): boolean {
+  public handleAvatarLoadError(event): boolean {
+    console.log(event)
     ElMessage({
       message: '头像加载失败',
       type: 'error',
