@@ -37,8 +37,8 @@ public class ImpService implements UserService {
 
     //保存个人信息
     @Override
-    public int insertUser(String email, String username, String text,String sex, String phone, String height, String skills, String education, String school, String address) {
-        int count = userMapper.insertUser(email,username,sex,phone,text,height,skills,education,school,address);
+    public int insertUser(String username,String sex,String height ,String phone,String email, String education,String school,String address,String skills,String text,String password) {
+        int count = userMapper.insertUser( username, sex, height  ,phone, email,  education, school, address, skills, text, password);
         return count;
     }
 
