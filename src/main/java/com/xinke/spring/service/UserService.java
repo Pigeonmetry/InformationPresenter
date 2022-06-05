@@ -38,9 +38,7 @@ public interface UserService {
      * @param username,sex,phone,height,skills,education,school,address
      * @return int
      */
-    int insertUser(String email,String username,String sex ,String phone,
-                   String height,String skills,String text,
-                   String education,String school,String address);
+    int insertUser(String username,String sex,String height ,String phone,String email, String education,String school,String address,String skills,String text,String password);
     /**
      * 查询所有信息
      * @param email

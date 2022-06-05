@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api")
 public class UserController {
 
-    static File avatarDir = new File("./avatar");
+    static File avatarDir = new File("C:\\spring\\spring\\src\\main\\resources\\static\\File");
     static MailHelper helper;
 
     static {
@@ -49,7 +49,7 @@ public class UserController {
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
-        if (!avatarDir.exists()) avatarDir.mkdirs();
+        if (!avatarDir.exists()) {avatarDir.mkdirs();}
     }
 
     static long midTime;
@@ -114,8 +114,10 @@ public class UserController {
         if (!StringUtils.hasLength(email) || !StringUtils.hasLength(password)) {
             model.addAttribute("msg", "注册失败，邮箱或密码未填写完整");
             model.addAttribute("status", "fail");
-            str = gson.toJson(model);
-            return str;
+        }
+        if(password.length()<6||password.length()>16){
+            model.addAttribute("msg", "注册失败,密码长度应介于6到16之前");
+            model.addAttribute("status", "fail");
         }
         User user = userService.seleteEmail(email);
         if (user != null) {
@@ -144,19 +146,21 @@ public class UserController {
         System.out.println("返回信息" + params);
         String username = params.get("username");
         String sex = params.get("sex");
-        String phone = params.get("phone");
+        String password = params.get("password");
         String height = params.get("height");
+        String phone = params.get("phone");
+        String email = params.get("email");
         String skills = params.get("skills");
         String education = params.get("education");
         String school = params.get("school");
         String address = params.get("address");
         String text = params.get("text");
-        user = userService.seleteEmail(session.getAttribute("email").toString());
+        user = userService.seleteEmail(email);
         if (user == null) {
             model.addAttribute("msg", "邮箱不存在,请重新确认或选择重新注册邮箱");
             model.addAttribute("status", "fail");
         } else {
-            int rs = userService.insertUser(session.getAttribute("email").toString(), username, sex, phone, height, skills, text, education, school, address);
+            int rs = userService.insertUser(username,sex,  height, phone, email, education,school , address,skills,text,password);
             model.addAttribute("msg", rs > 0 ? "修改成功" : "修改失败");
             model.addAttribute("status", "ok");
         }
