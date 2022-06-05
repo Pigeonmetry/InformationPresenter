@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api")
 public class UserController {
 
-    static File avatarDir = new File("C:\\spring\\spring\\avatar");
+    static File avatarDir = new File("avatar");
     static MailHelper helper;
 
     static {
@@ -185,7 +185,7 @@ public class UserController {
                 headerImg.getSize());
         if (!headerImg.isEmpty()) {
             //保存到文件服务器
-            headerImg.transferTo(file);
+            headerImg.transferTo(file.getAbsoluteFile());
             model.addAttribute("msg", "上传成功");
             model.addAttribute("status", "ok");
         } else {

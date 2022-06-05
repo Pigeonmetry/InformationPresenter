@@ -11,8 +11,8 @@ spring:
         session:
           cookie:
             same-site: "none"
-      tomcat:
-        uri-encoding : UTF-8
+#      tomcat:
+#        uri-encoding : UTF-8
 
 
 #Debug: true
