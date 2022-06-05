@@ -147,7 +147,7 @@
         :title="editor.title"
         @submit="commit">
       <template #content>
-        <el-input minlength="6" maxlength="16"  v-model="editor.data"/>
+        <el-input maxlength="28"  v-model="editor.data"/>
       </template>
     </Dialog>
   </div>
@@ -160,7 +160,6 @@ import Request from "../api/Request";
 import {ElMessage, UploadProps} from "element-plus";
 import qs from "qs";
 import Editor from '@tinymce/tinymce-vue';
-import * as assert from "assert";
 
 interface Response {
   status: string,
