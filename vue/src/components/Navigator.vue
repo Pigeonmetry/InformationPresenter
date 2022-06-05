@@ -66,7 +66,7 @@
       <template #content>
         <el-form class="dialog-content" id="form-signup" label-width="40px">
           <el-form-item label="邮箱">
-            <el-input minlength="6" maxlength="16" class="input-light" type="email" v-model="data.signup.email" required
+            <el-input maxlength="28" class="input-light" type="email" v-model="data.signup.email" required
                       clearable></el-input>
           </el-form-item>
           <el-form-item label="密码">
