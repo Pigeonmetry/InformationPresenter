@@ -147,7 +147,7 @@
         :title="editor.title"
         @submit="commit">
       <template #content>
-        <el-input v-model="editor.data"/>
+        <el-input minlength="6" maxlength="16"  v-model="editor.data"/>
       </template>
     </Dialog>
   </div>

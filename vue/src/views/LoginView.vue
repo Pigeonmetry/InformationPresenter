@@ -7,7 +7,7 @@
             <span>登录</span>
             <el-form class="login-form">
               <el-form-item>
-                <el-input class="input-light" type="email" v-model="data.login.email" required clearable>
+                <el-input minlength="6" maxlength="16"  class="input-light" type="email" v-model="data.login.email" required clearable>
                   <template #prefix>
                     <el-icon color="#1890ff" size="24px" class="el-input__icon">
                       <User/>
@@ -16,7 +16,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item>
-                <el-input class="input-light" type="password" v-model="data.login.password" required clearable
+                <el-input minlength="6" maxlength="16"  class="input-light" type="password" v-model="data.login.password" required clearable
                           show-password @keyup.enter="submitLogin">
                   <template #prefix>
                     <el-icon color="#1890ff" size="24px" class="el-input__icon">
