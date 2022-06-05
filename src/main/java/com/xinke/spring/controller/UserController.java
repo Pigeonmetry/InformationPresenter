@@ -41,7 +41,6 @@ import java.util.concurrent.ThreadFactory;
 @RequestMapping("/api")
 public class UserController {
 
-    static long midTime;
     static Gson gson = new Gson();
     static User user;
     static String str;
@@ -116,11 +115,14 @@ public class UserController {
              str =gson.toJson(model);
             return str;
         }
-        if(StringUtils.hasLength(password)==false){
-            model.addAttribute("msg", "注册失败，密码未填写完整");
+        if(password.length()<6||password.length()>16){
+            model.addAttribute("msg", "密码长度在6到16位");
             model.addAttribute("status","fail");
              str =gson.toJson(model);
             return str;
+        }
+        if(StringUtils.hasLength(password)){
+
         }
         User user = userService.seleteEmail(email);
         session.setAttribute("registerUser", user);
