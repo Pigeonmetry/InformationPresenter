@@ -66,10 +66,11 @@
       <template #content>
         <el-form class="dialog-content" id="form-signup" label-width="40px">
           <el-form-item label="邮箱">
-            <el-input minlength="6" maxlength="16"  class="input-light" type="email" v-model="data.signup.email" required clearable></el-input>
+            <el-input minlength="6" maxlength="16" class="input-light" type="email" v-model="data.signup.email" required
+                      clearable></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input minlength="6" maxlength="16"  class="input-light"
+            <el-input minlength="6" maxlength="16" class="input-light"
                       type="password"
                       v-model="data.signup.password"
                       required
@@ -89,7 +90,8 @@
         <el-form class="dialog-content" id="form-modify" label-width="60px">
 
           <el-form-item label="新密码">
-            <el-input minlength="6" maxlength="16"  class="input-light" name="password" type="password" v-model="data.modify.password" required
+            <el-input minlength="6" maxlength="16" class="input-light" name="password" type="password"
+                      v-model="data.modify.password" required
                       clearable show-password @keyup.enter="submitDefault('modify')"/>
           </el-form-item>
 
@@ -105,18 +107,21 @@
         <el-form class="dialog-content" id="form-retrieve" label-width="60px">
 
           <el-form-item label="邮箱">
-            <el-input minlength="6" maxlength="16"  id="otp-email" class="input-light" type="email" v-model="data.retrieve.email" required
+            <el-input maxlength="28" id="otp-email" class="input-light" type="email" v-model="data.retrieve.email"
+                      required
                       clearable></el-input>
           </el-form-item>
           <el-form-item label="验证码">
-            <el-input minlength="6" maxlength="6"  class="input-light" v-model="data.retrieve.otp" required clearable/>
+            <el-input minlength="6" maxlength="6" oninput="value=value.replace(/\D/g,'')" class="input-light"
+                      v-model="data.retrieve.otp" required clearable/>
             <el-button type="primary" :disabled="data.timeout.disable" round @click="sendOtp">
               发送验证码{{ data.timeout.count ? `(${data.timeout.count})` : '' }}
             </el-button>
           </el-form-item>
 
           <el-form-item label="新密码">
-            <el-input minlength="6" maxlength="16"  class="input-light" name="password" type="password" v-model="data.retrieve.password" required
+            <el-input minlength="6" maxlength="16" class="input-light" name="password" type="password"
+                      v-model="data.retrieve.password" required
                       clearable show-password @keyup.enter="submitDefault('retrieve')"/>
           </el-form-item>
 
