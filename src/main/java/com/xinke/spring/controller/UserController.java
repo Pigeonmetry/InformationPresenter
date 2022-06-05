@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api")
 public class UserController {
 
-    static File avatarDir = new File("C:\\spring\\spring\\.avatar");
+    static File avatarDir = new File("C:\\spring\\spring\\avatar");
     static MailHelper helper;
 
     static {

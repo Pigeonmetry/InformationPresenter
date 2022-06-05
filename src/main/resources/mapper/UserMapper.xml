@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinke.spring.mapper.UserMapper">
+    <!--int saveUser(String email,String password); -->
+    <insert id="saveUser" parameterType="user">
+        insert into tab_user values(#{email},#{password})
+    </insert>
+    <!--User login(String email, String password);-->
+    <select id="login" resultType="com.xinke.spring.bean.User">
+        select* from tab_user where
+            email = #{email}
+            and password = #{password}
+    </select>
+</mapper>
+
+
