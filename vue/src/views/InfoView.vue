@@ -226,7 +226,7 @@ export default class InfoView extends Vue {
     school: '未知',
     address: '未知',
     skills: '未知',
-    text: '这个人很懒\n什么都没有写...',
+    text: '未知',
   }
 
   private richOptions = {
